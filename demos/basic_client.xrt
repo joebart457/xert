@@ -1,0 +1,47 @@
+Language.Entry = "main";
+
+
+function main(){
+	
+	function onMessage(_ty message){
+		Console.WriteLine(message);
+	}
+
+	NetClient client = new Network.NetClient(
+		"127.0.0.1",			// host to connect to
+		60000::uint16_t,		// port to use
+		onMessage,			// callback when recieving a message from the server
+		false,				// Terminate after error in callback
+		true					// Suppress debug logs to console
+	);
+
+	client.Connect();		// Attempt to connect to server
+	if (client.IsConnected()){
+		Console.WriteLine("Connected to server.");
+		client.StartAsync();  // Start listening for messages
+		while (true){
+			Console.Write("> ");
+			string line = Console.ReadLine();
+			if (line == "quit" || !Null.IsNullType(client.GetLastError())){
+				client.Stop();
+				client.Disconnect();
+				break;
+			} else {
+				if (!client.Send(line)){
+					Console.WriteLine("Message send failure. Disconnecting...");
+					client.Stop();
+					client.Disconnect();
+					break;
+				}
+			}
+		}
+		Console.WriteLine("Disconnected from server");
+		Console.WriteLine(client.GetLastError());
+		Console.ReadKey();
+		return 0;
+	} else {
+		Console.WriteLine("Unable to connect to server.");
+		Console.ReadKey();
+		return -1;
+	}
+}

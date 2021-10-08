@@ -1,0 +1,62 @@
+
+
+Language.Entry = "main";
+
+
+function main(){
+	
+	function onClientConnect(string host, uint16_t port){
+		string addr = host + ":" + String.Create(port);
+		Console.WriteLine("Client attempting to connect from " + addr);
+		
+		return true; // Allow the connection
+	}
+	
+	function onClientValidated(uint32_t clientId){
+		_ty client = server.GetClientById(clientId);
+		if (!Null.IsNullType(client)){
+			string fullAddress = client.Host() + ":" + String.Create(client.Port());
+			Console.WriteLine("Client[" + String.Create(clientId) + "](" + fullAddress + ") connected and validated");
+		} else {
+			Console.WriteLine("Unable to gather connection info on validated client with id: "+String.Create(clientId));
+		}
+	}
+	
+	function onClientDisconnect(uint32_t clientId){
+		Console.WriteLine("Client[" + String.Create(clientId)+ "] Disconnected. Bye, bye.");
+	}
+	
+	function onMessage(uint32_t clientId, _ty message){
+		Console.Write("Client["+String.Create(clientId)+"]:");
+		Console.WriteLine(message);
+		
+		if (typeof(message) == typeof("")){
+			// if its a string, assume they are trying to chat
+			server.MessageAll(message, clientId); // message all clients except the one who just sent it
+		}
+	}
+
+
+	NetServer server = new Network.NetServer(
+		60000::uint16_t,		// port to host on
+		onClientConnect,		// callback when client attempts to connect for first time
+		onClientValidated,	// callback when client is validated by server
+		onClientDisconnect,	// callback when client disconnects
+		onMessage,			// callback when server recieves a message from any client
+		false,				// Terminate after error in callback
+		true					// Suppress debug logs to console
+	);
+	
+	server.Start();
+	while (true){
+		server.Update((-1)::uint32_t, true); // maximum messages to recieve, wait for message in queue
+		_ty err = server.GetLastError();
+		if (!Null.IsNullType(err)){
+			Console.WriteLine("Error: "+ String.Create(err));
+			break;
+		}
+	}
+	server.Stop();
+	Console.WriteLine("Server stopped");
+	Console.ReadKey();
+}
