@@ -10,11 +10,11 @@ function main(){
 	NetClient client = new Network.NetClient(
 		"127.0.0.1",			// host to connect to
 		60000::uint16_t,		// port to use
-		onMessage,			// callback when recieving a message from the server
+		onMessage,		// callback when recieving a message from the server
 		false,				// Terminate after error in callback
-		true					// Suppress debug logs to console
+		true				// Suppress debug logs to console
 	);
-
+	
 	client.Connect();		// Attempt to connect to server
 	if (client.IsConnected()){
 		Console.WriteLine("Connected to server.");

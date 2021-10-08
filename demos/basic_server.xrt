@@ -42,9 +42,9 @@ function main(){
 		onClientConnect,		// callback when client attempts to connect for first time
 		onClientValidated,	// callback when client is validated by server
 		onClientDisconnect,	// callback when client disconnects
-		onMessage,			// callback when server recieves a message from any client
+		onMessage,		// callback when server recieves a message from any client
 		false,				// Terminate after error in callback
-		true					// Suppress debug logs to console
+		true				// Suppress debug logs to console
 	);
 	
 	server.Start();
