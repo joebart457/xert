@@ -36,7 +36,6 @@ function main(){
 			}
 		}
 		Console.WriteLine("Disconnected from server");
-		Console.WriteLine(client.GetLastError());
 		Console.ReadKey();
 		return 0;
 	} else {
