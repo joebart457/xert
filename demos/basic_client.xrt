@@ -9,7 +9,7 @@ function main(){
 
 	NetClient client = new Network.NetClient(
 		"127.0.0.1",			// host to connect to
-		60000::uint16_t,		// port to use
+		6u,			// port to use
 		onMessage,		// callback when recieving a message from the server
 		false,				// Terminate after error in callback
 		true				// Suppress debug logs to console
